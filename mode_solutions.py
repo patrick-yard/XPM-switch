@@ -7,9 +7,9 @@ sys.path.append("C:\\Program Files\\Lumerical\\v212\\api\\python")
 import lumapi
 
 
-class mode_sol:
+class Solver:
 
-    def __init__(self,simulation_parameters:dict,mode = 'TE',hide=False,close=False):
+    def __init__(self,simulation_parameters:dict,mode = 'TE', hide=False, close=False):
 
         '''Class to interface python and Lumerical MODE (EME) functionality. 
 
