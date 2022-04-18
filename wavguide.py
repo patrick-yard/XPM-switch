@@ -8,14 +8,20 @@ GENERAL_SIM_PARAMS = {}
 
 class Waveguide(Solver):
 
-    def __init__(self,waveguide_parameters:dict, general_params = GENERAL_SIM_PARAMS mode = 'TE',hide = True,close = True):
+    def __init__(self,
+                waveguide_parameters:dict,
+                general_params = GENERAL_SIM_PARAMS,
+                mode = 'TE',
+                hide = True,
+                close = True
+                ):
 
         '''Class representing a Waveguide component. Inputs waveguide parameters and simulation parameters'''
 
         self.waveguide_parameters = waveguide_parameters
         self.waveguide_parameters.update(general_params)
 
-        super.__init__(self.waveguide_parameters)
+        super.__init__(self.waveguide_parameters,mode = mode, hide = hide, close = close)
     
     def get_field_profile(self,index:int or list) -> dict():
 
