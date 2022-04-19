@@ -3,7 +3,7 @@ import os
 import sys
 from scipy.constants import c
 from itertools import product
-sys.path.append("C:\\Program Files\\Lumerical\\v212\\api\\python")
+sys.path.append("C:\\Program Files\\Lumerical\\v221\\api\\python")
 import lumapi
 
 
@@ -38,12 +38,12 @@ class Solver:
 
         print('Initialising MODE instance...')
         self.mode = lumapi.MODE(hide = self.hide)
-        self.mode.eval("cd('" + os.getcwd() + "');")
+        self.mode.eval("cd('" + os.path.join(os.getcwd(),"LumericalFiles") + "');")
         print('Inputting simulation parameters...')
         self.input_parameters(self.simulation_parameters)
         print('Fitting material parameters...')
         if self.simulation_parameters['material_wg'] == "SiN (Silicon Nitride) - MuensterSpecs":
-            self.mode.eval("ImportMaterials;")
+            self.mode.eval("LumericalFiles\\ImportMaterials;")
         self.fit_materials()
 
         print('Initialisation complete')
@@ -201,7 +201,7 @@ class Solver:
         self.input_parameters(sim_params)
 
         print('Performing parameter sweep')        
-        self.mode.eval("parameter_sweep;")
+        self.mode.eval("LumericalFiles\\parameter_sweep;")
         self.mode.eval("save;")
         print('Sweep complete')
 
