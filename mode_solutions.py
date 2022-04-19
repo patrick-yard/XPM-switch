@@ -182,7 +182,7 @@ class Solver:
 
         res_dict['f'] = res_dict['f'].T
 
-        checked_params = self.check_many(res_dict)
+        checked_params = self.check_many(res_dict,res_dict['neff'],res_dict['is_TE'])
         checked_params['wav'] = c / res_dict['f'][0]
 
         if self.close: self.close_instance()
