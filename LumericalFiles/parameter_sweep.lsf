@@ -1,0 +1,85 @@
+switchtolayout;
+#cd("C:\Users\am17073\Documents\PhDProjects\Reconfigurable_Hamiltonian\RW_PYTHON_MULTI");
+rm("straight_waveguide.lms");
+save("straight_waveguide.lms");
+
+#?wi/dth
+
+#wavelength = 1.55e-6;
+#N_points_Disp = 1;
+#start_wavelength = 1.5e-6;
+#stop_wavelength = 1.6e-6;
+#d_wavelength = (stop_wavelength-start_wavelength) / (N_points_Disp-1);
+#width = 2000e-9;
+#height = 220e-9;
+#Lc = 1e-6;
+#top_cladding_thickness = 2e-6;
+#bottom_cladding_thickness = 2e-6;
+#Mode_resolution = 100;
+#substrate_height = 2e-6;
+#num_TE = 2;
+#material_wg = "Si (Silicon) - Palik";
+#material_clad = "SiO2 (Glass) - Palik";
+#mesh_dx = 0.1e-6;
+#mesh_dy = 0.1e-6;
+#parameter = 'width';
+#parameter_start = 1300e-9;
+#parameter_end = 2900e-9;
+#steps = 2;
+#linear = 1;
+if(linear == 1){sweep = linspace(parameter_start,parameter_end,steps);}
+if(linear == 0){
+    steps = steps1 + steps2;
+    half1 = linspace(parameter_start,parameter_mid -0.05e-6,steps1);
+    half2 = linspace(parameter_mid,parameter_end,steps2);
+    sweep = matrix(steps,1);
+    sweep(1:steps1) = half1;
+    sweep(steps1 + 1:steps) = half2;
+    
+}
+?sweep;
+bnd_metal="metal";
+bnd_PML="PML";
+
+neff = matrix(steps,num_TE,1); 
+    
+is_TE = matrix(steps,num_TE,1);
+loss = matrix(steps,num_TE,1);
+
+
+for(j=1;j<=steps;j=j+1){
+  
+commandstring = parameter + "=" + num2str(sweep(j));
+
+?commandstring;
+switchtolayout;
+eval(commandstring + ";");
+
+sim_setup;
+run;
+
+switchtolayout;
+select("FDE");
+set("number of trial modes",num_TE);
+set('wavelength',wavelength);
+
+findmodes;
+
+
+res = Mode_resolution+1;
+
+
+for(i=1;i<=num_TE;i=i+1){
+#counter = TE_array(i);
+?"mode"+num2str(i);
+selectmode(i);
+
+
+neff(j,i)=getdata("mode"+num2str(i),"neff");
+
+is_TE(j,i) = getdata("mode"+num2str(i),"TE polarization fraction");
+loss(j,i) =  getdata("mode"+num2str(i),"loss");
+  
+    
+}
+}
