@@ -1,0 +1,35 @@
+#Add SiN material from Munster specs 
+DataMaterial=readdata("SiN_RefractiveIndex_MuensterSpecs.txt");
+Lambdas=DataMaterial(:,1)*(1.e-9);
+freqs=c/Lambdas;
+indexvalues=DataMaterial(:,2);
+permittivities=indexvalues^2;
+freqPermData=[freqs,permittivities];
+
+newmaterialname="SiN (Silicon Nitride) - MuensterSpecs";
+
+if(findstring(setmaterial,newmaterialname) <= 0 ) { #add material if it does not already exist
+    tempname = addmaterial("Sampled data");
+    setmaterial(tempname,"name",newmaterialname);
+}
+
+setmaterial(newmaterialname,"sampled data",freqPermData);
+setmaterial(newmaterialname,"improve numerical stability",false); # set false to obtain a better fit
+
+#Add HSQ material from Munster specs
+refIndex=1.39;
+Lambdas=linspace(1500,1600,100)*(1.e-9);
+freqs=c/Lambdas;
+indexvalues=ones(length(Lambdas))*refIndex;
+permittivities=indexvalues^2;
+freqPermData=[freqs,permittivities];
+
+newmaterialname="HSQ - Munster spec";
+
+if(findstring(setmaterial,newmaterialname) <= 0 ) { #add material if it does not already exist
+    tempname = addmaterial("Sampled data");
+    setmaterial(tempname,"name",newmaterialname);
+}
+
+setmaterial(newmaterialname,"sampled data",freqPermData);
+setmaterial(newmaterialname,"improve numerical stability",false); # set false to obtain a better fit

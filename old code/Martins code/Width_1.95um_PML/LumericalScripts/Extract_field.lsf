@@ -1,0 +1,23 @@
+ switchtolayout; 
+ findmodes; 
+ selectmode(1);
+ 
+ setanalysis("track selected mode",1);
+ setanalysis("detailed dispersion calculation",1);
+ setanalysis("number of points",2);
+ 
+# Option to store field data during frequency sweep.
+ setanalysis("store mode profiles while tracking",1);
+ 
+ frequencysweep;
+ 
+ # Get E- field data
+ Ex=pinch(getdata("frequencysweep","Ex"));
+ Ey=pinch(getdata("frequencysweep","Ey")); 
+ Ez=pinch(getdata("frequencysweep","Ez"));
+ x=getdata("frequencysweep","x");
+ y=getdata("frequencysweep","y");
+ f=getdata("frequencysweep","f");
+ printf(Ey(:,:,2));
+# Plot the absolute value squared of y-component at second frequency point 
+ #image(x*1e6,y*1e6,abs(Ey(:,:,2)^2,));

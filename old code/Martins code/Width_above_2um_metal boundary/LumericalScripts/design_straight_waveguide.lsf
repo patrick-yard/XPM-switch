@@ -1,0 +1,59 @@
+addrect;
+name_wg="wg";
+set("name",name_wg);
+set("x",0);
+set("x span",width);
+set("y",0);
+set("y span",height);
+set("z min",0);
+set("z max",Lc+5e-6);
+
+
+materialSi = "Si (Silicon) - Palik";
+selectall;
+set("material",material_wg);
+#setmaterial(materialSi,"max coefficients",10);
+set("override mesh order from material database",1);
+set("mesh order",1);
+
+
+
+addrect;
+set("name","BOX");
+set("x min",-width/2-7e-6);
+set("x max",-width/2+width+7e-6);
+set("y max",-height/2);
+set("y min",-bottom_cladding_thickness-height/2);
+set("z min",0);
+set("z max",Lc+5e-6);
+materialSiO2 = "SiO2 (Glass) - Palik";
+set("material",materialSiO2);
+#setmaterial(materialSiO2,"max coefficients",10);
+set("alpha",0.3);
+
+addrect;
+set("name","clad");
+set("x min",-width/2-7e-6);
+set("x max",-width/2+width+7e-6);
+set("y max",top_cladding_thickness - height/2);
+set("y min",-height/2);
+set("z min",0);
+set("z max",Lc+5e-6);
+set("material",material_clad);
+#setmaterial(materialSiO2,"max coefficients",10);
+set("alpha",0.3);
+
+addrect;
+set("name","Substrate");
+set("x min",-width/2-7e-6);
+set("x max",-width/2+width+7e-6);
+set("y max",-bottom_cladding_thickness-height/2);
+set("y min",-bottom_cladding_thickness-height/2-substrate_height);
+set("z min",0);
+set("z max",Lc+5e-6);
+set("material",materialSi);
+#setmaterial(materialSiO2,"max coefficients",10);
+set("alpha",0.3);
+
+
+

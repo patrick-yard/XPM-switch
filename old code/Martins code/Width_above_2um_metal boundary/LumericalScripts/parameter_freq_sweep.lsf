@@ -1,0 +1,102 @@
+switchtolayout;
+#cd("C:\Users\am17073\Documents\PhDProjects\Reconfigurable_Hamiltonian\RW_PYTHON_MULTI");
+rm("straight_waveguide.lms");
+save("straight_waveguide.lms");
+
+#?wi/dth
+
+#wavelength = 1.55e-6;
+#N_points_Disp = 3;
+#start_wavelength = 1.5e-6;
+#stop_wavelength = 1.6e-6;
+#d_wavelength = (stop_wavelength-start_wavelength) / (N_points_Disp-1);
+#width = 2000e-9;
+#height = 220e-9;
+#Lc = 1e-6;
+#top_cladding_thickness = 2e-6;
+#bottom_cladding_thickness = 2e-6;
+#Mode_resolution = 100;
+#substrate_height = 2e-6;
+#num_TE = 2;
+#material_wg = "Si (Silicon) - Palik";
+#material_clad = "SiO2 (Glass) - Palik";
+#mesh_dx = 0.1e-6;
+#mesh_dy = 0.1e-6;
+#parameter = 'width';
+#parameter_start = 800e-6;
+#parameter_end = 2000e-6;
+#steps = 2;
+
+sweep = linspace(parameter_start,parameter_end,steps);
+?sweep;
+bnd_metal="metal";
+bnd_PML="PML";
+
+neff = matrix(steps,num_TE,N_points_Disp);    
+f = matrix(N_points_Disp); 
+f_vg = matrix(N_points_Disp);
+vg = matrix(steps,num_TE,N_points_Disp);  
+D = matrix(steps,num_TE,N_points_Disp); 
+    
+is_TE = matrix(steps,num_TE,1);
+loss = matrix(steps,num_TE,1);
+
+
+for(j=1;j<=steps;j=j+1){
+  
+commandstring = parameter + "=" + num2str(sweep(j));
+
+?commandstring;
+switchtolayout;
+eval(commandstring + ";");
+
+sim_setup;
+run;
+
+switchtolayout;
+select("FDE");
+set("number of trial modes",num_TE);
+set("wavelength",wavelength - (N_points_Disp - 1) * d_wavelength / 2);
+
+findmodes;
+setanalysis("stop wavelength",wavelength + (N_points_Disp - 1) * d_wavelength / 2);
+setanalysis("number of points",N_points_Disp);
+setanalysis("number of test modes",num_TE);
+setanalysis("detailed dispersion calculation",1);
+setanalysis("track selected mode",1);
+
+
+
+
+res = Mode_resolution+1;
+
+#TE_count = 0;
+#TE_array = matrix(num_TE,1);
+#for(i=1;i<=num_TE;i=i+1){
+
+#if(getdata("mode"+num2str(i),"TE polarization fraction") > 0.9){
+#TE_count = TE_count + 1;
+#TE_array(TE_count) = i ;   
+   #}
+
+#}
+for(i=1;i<=num_TE;i=i+1){
+#counter = TE_array(i);
+?"mode"+num2str(i);
+selectmode(i);
+
+frequencysweep;
+
+neff(j,i,1:N_points_Disp)=getdata("frequencysweep","neff");
+f(1:N_points_Disp)=getdata("frequencysweep","f");
+f_vg(1:N_points_Disp)=getdata("frequencysweep","f_vg");
+vg(j,i,1:N_points_Disp)=getdata("frequencysweep","vg");
+D(j,i,1:N_points_Disp)=getdata("frequencysweep","D");
+
+is_TE(j,i) = getdata("mode"+num2str(i),"TE polarization fraction");
+loss(j,i) =  getdata("mode"+num2str(i),"loss");
+
+   
+    
+}
+}

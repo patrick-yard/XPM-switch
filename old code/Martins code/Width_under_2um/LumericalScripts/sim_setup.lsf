@@ -1,0 +1,46 @@
+deleteall;
+
+
+
+
+design_straight_waveguide;
+
+addfde;
+setnamed("FDE","fit materials with multi-coefficient model",1);
+setnamed("FDE","wavelength start",1e-6);
+setnamed("FDE","wavelength stop",2.5e-6);
+#set("background index",1);
+set("index",1);
+set("solver type","2D Z normal");
+set("x min",-width/2-10e-6);
+set("x max",width/2+10e-6);
+set("y min",-bottom_cladding_thickness-height/2-0.05e-6);
+set("y max",(10e-6)-height/2-0.05e-6);
+
+set("z",Lc/2);
+set("mesh cells x",Mode_resolution);
+set("mesh cells y",Mode_resolution);
+set("x min bc",bnd_PML);
+set("x max bc",bnd_PML);
+#set("y min bc",bnd_PML);
+set("y max bc",bnd_PML);
+#set("x min bc",bnd_metal);
+#set("x max bc",bnd_metal);
+set("y min bc",bnd_metal);
+#set("y max bc",bnd_metal);
+
+
+addmesh;
+set("name","meshFDE");
+set("x min",-width/2);
+set("x max",-width/2+width);
+set("y",0);
+set("y span",height);
+set("z",Lc/2);
+set("z span",0);
+set("override z mesh",0);
+set("override y mesh",1);
+set("override x mesh",1);
+set("dx",mesh_dx);
+set("dy",mesh_dy);
+
