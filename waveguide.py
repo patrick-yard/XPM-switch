@@ -1,7 +1,4 @@
 import numpy as np
-import os
-import sys
-from scipy.constants import c
 from mode_solutions import Solver
 import matplotlib.pyplot as plt
 
@@ -20,6 +17,7 @@ class Waveguide(Solver):
         self.total_params = dict()
         self.total_params.update(self.material_parameters)
         self.total_params.update(self.simulation_parameters)
+        self.n = material_parameters['n'] # TODO: read this from lumerical
 
         super().__init__(self.total_params,*self.other_params)
 
@@ -39,11 +37,7 @@ class Waveguide(Solver):
             self.plot_field_profiles()
         
         return field_dict
-    # def interpolate_array(self,array:np.array or list,n_points = 1000) -> np.array:
-        
-    #     '''Interpolate 1D array'''
-        
-    #     return np.linspace(min)
+
 
     def plot_field_profiles(self):
         
@@ -75,6 +69,7 @@ class Waveguide(Solver):
         self.D = self.disp_dict['D']
         self.neff = self.disp_dict['neff']
         self.wav = self.disp_dict['wav']
+        self.f = self.disp_dict['f']
 
         if plot:
             self.plot_dispersion_data()

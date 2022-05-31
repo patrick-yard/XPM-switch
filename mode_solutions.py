@@ -173,7 +173,7 @@ class Solver:
 
         res_dict = self.read_params(res_dict)
 
-        f = res_dict['f'].T
+        f = res_dict['f'].T[0]
         res_dict.pop('f')
 
         checked_params = self.check_many(res_dict, freq_sweep=True)
@@ -234,7 +234,7 @@ class Solver:
         checked_params = self.check_many(res_dict)
 
         checked_params['wav'] = c / res_dict['f'][0]
-
+        checked_params['f'] = res_dict['f'][0]
         if self.close:
             self.close_instance()
 

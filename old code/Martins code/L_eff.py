@@ -30,11 +30,11 @@ eps0 = const.epsilon_0
 A = lambda z,t,tau_p,v_g: np.exp(-((t-z/v_g)/tau_p)**2)*np.exp(-((z-t*v_g)/z_0(tau_p,v_g))**2)
 
 def E(z,t,A0,tau_p,v_g,lamb):
-    E_ = A0*A(z,t,tau_p,v_g)*np.exp(1j*(k(lamb)*z-omega(lamb)*t))
+    E_ = A(z,t,tau_p,v_g)*np.exp(1j*(k(lamb)*z-omega(lamb)*t))
     return (E_)
-
+# I_ = (c*eps0*n/2)*(E(z,t,A0,tau_p,v_g,lamb)*E(z,t,A0,tau_p,v_g,lamb).conjugate()).real
 def I(z,t,A0,tau_p,v_g,lamb,n):
-    I_ = (c*eps0*n/2)*(E(z,t,A0,tau_p,v_g,lamb)*E(z,t,A0,tau_p,v_g,lamb).conjugate()).real
+    I_ = (E(z,t,A0,tau_p,v_g,lamb)*E(z,t,A0,tau_p,v_g,lamb).conjugate()).real
     return (I_)
 
 # calculate power
@@ -62,15 +62,20 @@ def L_eff(L,f_rep,Aeff01,tau_p01,v_g01,lamb01,Aeff02,tau_p02,v_g02,lamb02,P_avg0
     lamb02 = lamb02*10**(-9)
     
     #integration bounds (substitution of infinity in dt)
-    endT = 2*L/v_g01 #L/v_g01 = time of propagation of the 1. pulse through the whole waveguide
+    endT = 2*L/min([v_g01,v_g02]) #L/v_g01 = time of propagation of the 1. pulse through the whole waveguide
+    print(f'end T = {endT}')
     tau_p_ = min(tau_p01,tau_p02)
     
     # denominator
+
     t_array = np.linspace(0,endT,3000)
     I_temp = lambda t: I(L/2,t,A01,tau_p01,v_g01,lamb01,n01)*I(L/2,t-tau_delay,A02,tau_p02,v_g02,lamb02,n02)
     dt = t_array[1]
     int_array = I_temp(t_array)*dt
+    # print(t_array)
+    # print([x for x in I_temp(t_array) if x > 1e-50])
     denom = np.sum(int_array)
+    print(f'denom =  {denom}')
     
     # numerator
     t_array = np.linspace(0,endT,5000)
@@ -80,7 +85,7 @@ def L_eff(L,f_rep,Aeff01,tau_p01,v_g01,lamb01,Aeff02,tau_p02,v_g02,lamb02,P_avg0
     for i,t in enumerate(t_array):
         res[i] = I_temp(t,z_array)
     int_res = np.trapz(np.trapz(res,x = t_array),x = z_array)
-    
+    print(f'numerator = {int_res}')
     l_eff = int_res/denom
     return (l_eff)
 
@@ -115,15 +120,27 @@ if __name__ == '__main__':
     
     #Pulse 1 - sig.: TE0, 1555nm, 6.18ps
     Aeff01 = 1.258795448537488 #um^2
-    tau_p01 = 6.18 #pulse length in ps
-    v_g01 = 152228482.56849426 #propagation speed in [m/s]
+    # tau_p01 = 1#6.18 #pulse length in ps
+    # v_g01 = 152228482.56849426 #propagation speed in [m/s]
+    # lamb01 = 1555 #lamb in nm
+    tau_p01 = 1#6.18 #pulse length in ps
+    v_g01 = 148546458.96531838 #propagation speed in [m/s]
     lamb01 = 1555 #lamb in nm
     
-    #Pulse 2 - pump: TE1, 1560nm, 3.87ps
+    #Pulse 1 - sig.: TE0, 1555nm, 6.18ps
+    # Aeff02 = 1.258795448537488 #um^2
+    # tau_p02 = 6.18 #pulse length in ps
+    # v_g02 = 152228482.56849426 #propagation speed in [m/s]
+    # lamb02 = 1555 #lamb in nm
+    # #Pulse 2 - pump: TE1, 1560nm, 3.87ps
     Aeff02 = 1.6575927059408382 #um^2
-    tau_p02 = 3.87 #pulse length in ps
-    v_g02 = 148663622.78341362 #propagation speed in [m/s]
-    lamb02 = 1560 #lamb in nm
+    # tau_p02 = 1#3.87 #pulse length in ps
+    # v_g02 = 148663622.78341362 #propagation speed in [m/s]
+    # lamb02 = 1560 #lamb in nm
+
+    tau_p02 = 1#3.87 #pulse length in ps
+    v_g02 = 152326128.6527365 #propagation speed in [m/s]
+    lamb02 = 1557.5 #lamb in nm
     
     l_eff = L_eff(L,f_rep,Aeff01,tau_p01,v_g01,lamb01,Aeff02,tau_p02,v_g02,lamb02)
     print (l_eff)
