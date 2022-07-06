@@ -32,7 +32,7 @@ class Pulse():
         self.get_vg()
         self.get_neff()
         self.get_peak_power()
-    
+        self.ng = c/self.vg
         
     def get_mode_profile(self):
         

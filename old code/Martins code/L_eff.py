@@ -123,7 +123,7 @@ if __name__ == '__main__':
     # tau_p01 = 1#6.18 #pulse length in ps
     # v_g01 = 152228482.56849426 #propagation speed in [m/s]
     # lamb01 = 1555 #lamb in nm
-    tau_p01 = 1#6.18 #pulse length in ps
+    tau_p01 = 6.18 #pulse length in ps
     v_g01 = 148546458.96531838 #propagation speed in [m/s]
     lamb01 = 1555 #lamb in nm
     
@@ -138,9 +138,9 @@ if __name__ == '__main__':
     # v_g02 = 148663622.78341362 #propagation speed in [m/s]
     # lamb02 = 1560 #lamb in nm
 
-    tau_p02 = 1#3.87 #pulse length in ps
+    tau_p02 = 3.87 #pulse length in ps
     v_g02 = 152326128.6527365 #propagation speed in [m/s]
-    lamb02 = 1557.5 #lamb in nm
+    lamb02 = 1560 #lamb in nm
     
     l_eff = L_eff(L,f_rep,Aeff01,tau_p01,v_g01,lamb01,Aeff02,tau_p02,v_g02,lamb02)
     print (l_eff)

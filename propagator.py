@@ -82,33 +82,43 @@ class Propagator():
         signal_field_wg = self.pump.interp_list[3]
 
         x_wg,y_wg = self.pump.interp_list[1]
-        print(len(x_wg),len(y_wg))
-        print(pump_field_wg.shape,signal_field_wg.shape)
+
         if linear:
                        
             numerator = abs(np.trapz(np.trapz(pump_field.conj()*signal_field,x=y),x=x))**2
         else:
-            # numerator = np.trapz(np.trapz(abs(pump_field_wg)**2 * abs(signal_field_wg)**2,x=y_wg),x=x_wg)
-            numerator = np.trapz(np.trapz(abs(pump_field)**2 * abs(signal_field)**2,x=y),x=x)
+            numerator = np.trapz(np.trapz(abs(pump_field_wg)**2 * abs(signal_field_wg)**2,x=y_wg),x=x_wg)
+            # numerator = np.trapz(np.trapz(abs(pump_field)**2 * abs(signal_field)**2,x=y),x=x)
         
         denomenator = np.trapz(np.trapz(abs(pump_field)**2,x=y),x=x)*np.trapz(np.trapz(abs(signal_field)**2,x=y),x=x)
-        # print(numerator,denomenator)
+        
+        print(numerator,denomenator)
+
+
         return numerator/denomenator
 
-    def calculate_phase(self) -> float:
+    def calculate_phase(self,p:float = None) -> float:
 
-        '''Calculate XPM phase shift imparted by pump onto signal'''
+        '''Calculate XPM phase shift imparted by pump onto signal
+            input
+             p: peak power. Can be None. overrides peak power calculation from pump pulse. 
+            Allows power sweeps without reinitiallising propagator class'''
 
-        prefactor = (4*np.pi*self.n2)/self.signal.wav
+        prefactor = (4*np.pi*self.n2)/self.signal.lambda0
         
         ref_indices = (self.pump.ng*self.signal.ng)/self.Waveguide.n**2
 
-        overlap = self.calculate_overlap(linear = False)
+        overlap = 434522320620.3962#self.calculate_overlap(linear = False)
 
-        power = self.pump.peak_power
+        if p:
+            power = p
+        else:
+            power = self.pump.peak_power
 
-        Leff = self.caculate_Leff()
-
+        print(prefactor,ref_indices)
+        Leff = np.real(self.caculate_Leff())
+        print(self.n2,self.signal.lambda0,self.pump.ng,self.signal.ng,self.Waveguide.n)
+        print(overlap,Leff,power)
         phase = prefactor * ref_indices *  overlap * power * Leff
 
         return phase
