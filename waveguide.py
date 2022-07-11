@@ -1,13 +1,22 @@
 import numpy as np
 from mode_solutions import Solver
 import matplotlib.pyplot as plt
+import os,json
 
 class Waveguide(Solver):
 
     '''Class to simulate waveguide geometry for XPM.
-        Parses input parameters for Solver and has functions to get and plot desired properties'''
+        Parses input parameters for Solver and has functions to get and plot desired properties
+        '''
 
     def __init__(self,material_parameters:dict,simulation_parameters:dict,mode:str,hide:bool,close:bool):
+        
+        '''Inputs:
+            material_parameters: dictionary containing the waveguide dimensions and core/cladding materials
+            simulation_parameters: dictionary containing paramters relating to the simulation region
+            mode: string indicating which transverse mode type should be returned TE or TM
+            hide: Bool deciding whether the GUI is hidden
+            close: Bool deciding whether the GUI is closed once the simulation is finished'''
 
         self.material_parameters = material_parameters
         self.simulation_parameters = simulation_parameters
@@ -17,8 +26,8 @@ class Waveguide(Solver):
         self.total_params = dict()
         self.total_params.update(self.material_parameters)
         self.total_params.update(self.simulation_parameters)
-        self.n = material_parameters['n'] # TODO: read this from lumerical
-
+        self.n = material_parameters['n'] # TODO: read this from lumerical     
+        
         super().__init__(self.total_params,*self.other_params)
 
 
@@ -95,5 +104,45 @@ class Waveguide(Solver):
 
         fig.tight_layout()
         plt.show()
+
+        return
+    
+
+class DummyWaveguide():
+
+    '''Dummy waveguide class, loads presaved data'''
+
+    def __init__(self,folder):
+        
+        '''input:
+        Folder should contain only one simulation data JSON file at a time.'''
+
+        self.folder = folder
+
+        self.load_data()
+        self.combine_E_field
+    
+    def load_data(self) -> None:
+
+        '''Load JSON file into dictionary'''
+
+        self.file = [os.path.join(self.folder,f) for f in os.listdir(self.folder) if f.endswith(".JSON")][0]
+
+        with open(self.file,'r') as jsonfile:
+            self.data_dict = json.loads(jsonfile)
+
+        return
+
+    def combine_E_field(self) -> None:
+        
+        '''E field profiles split into real and imaginary parts (JSON doesnt like complex numbers apparently). This function recombines'''
+        
+        E_field_temp = []
+        
+        for E_real,E_imag in zip(self.data_dict['E_field_real'],self.data_dict['E_field_imag']):
+
+            E_field_temp.append(np.array(E_real) + 1j*np.array(E_imag))
+        
+        self.data_dict['E_field'] = E_field_temp
 
         return

@@ -10,7 +10,7 @@ class Pulse():
     lambd0: pulse central wavelength in nm
     dt: pulsewidth in ps
     power: power per pulse in mW - average_power/rep_rate
-    waveguide: Waveguide class containing geometry and lumerical simulation components
+    waveguide: Waveguide class containing geometry and lumerical simulation components. Can be none and use load_data
     '''
 
     def __init__(self,
